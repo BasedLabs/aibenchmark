@@ -10,12 +10,12 @@ Benchmark your model against popular benchmarks
 from aibenchmark import Benchmark
 
 def preprocess_func(input_instance):
-  # tokenise, rescale ...
+  // tokenise, rescale ...
 
   return model_input
 
 def post_process_func(model_output):
-  # Decode, map to labels...
+  // Decode, map to labels...
 
   return correct_output
 
