@@ -1,0 +1,2 @@
+class NotSupportableDecompressionFileFormat(Exception):
+    pass
