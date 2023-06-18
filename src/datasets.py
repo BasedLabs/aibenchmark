@@ -75,4 +75,7 @@ class DatasetEnum(Enum):
     GOOGLE_DRIVE_DATASET: DatasetBase = GoogleDriveTestDataset(
         'half-life--wallpaper.7z',
         "https://drive.google.com/uc?id=1D9gbIfv7aAWq1i_7IqqloU9NI6ZYuxlh")
+    CIFAR10: DatasetBase = PaperswithCode(
+        'https://paperswithcode.com/dataset/cifar-10'
+    )
     PYTORCH_DEFAULT_DATASET: DatasetBase = PytorchDataset("test")  # pytorch class

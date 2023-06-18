@@ -41,5 +41,5 @@ class Benchmark:
 
 
 if __name__ == '__main__':
-    benchmark = Benchmark.load(DatasetEnum.GOOGLE_DRIVE_DATASET, lambda x: print(x), reload_cache=True)
+    benchmark = Benchmark.load(DatasetEnum.CIFAR10, lambda x: print(x), reload_cache=True)
     print(benchmark.output_format)
