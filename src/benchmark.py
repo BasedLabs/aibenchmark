@@ -1,7 +1,9 @@
 import logging
-from typing import Callable, Union
+from typing import Callable, Union, List, Tuple
 
 from src.datasets import DatasetBase, DatasetInfo, DatasetEnum
+from src.metrics import RegressionMetrics, ClassificationMetrics
+from src.exceptions import NotSupportedTask
 
 
 class Benchmark:
@@ -34,8 +36,33 @@ class Benchmark:
     def input_format(self):
         return self._dataset_info.input_format
 
-    def run(self):
-        user_model_result = self._callback(self._dataset_info)
+    def get_existing_benchmarks(self) -> Dict[Str, List[Tuple[str, int]]]:
+        pass
+
+    def run(self, task: str, metrics: List[str]):
+        """
+        :task: ['regression', 'classification']
+        :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
+                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
+        """
+        predictions = self._callback(self._dataset_info)
+        targets = self._dataset.targets
+        metric_calculator = None
+
+        if task == 'regression':
+            metric_calculator = RegressionMetrics(predictions, targets)
+        elif task  == 'classification':
+            metric_calculator = ClassificationMetrics(predictions, targets)
+        else:
+            raise NotSupportedTask('This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
+
+
+        results = []
+        for metric in metrics:
+            results.append((metric, metric_calculator.calculate_metric(metric))
+
+        return results
+
         print(user_model_result)
         # actual benchmark here
 
