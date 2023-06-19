@@ -1,7 +1,7 @@
 import logging
-from typing import Callable, Union, List, Tuple
+from typing import Callable, Union, List, Tuple, Dict
 
-from src.datasets import DatasetBase, DatasetInfo, DatasetEnum
+from src.dataset import DatasetBase, DatasetInfo, DatasetEnum
 from src.metrics import RegressionMetrics, ClassificationMetrics
 from src.exceptions import NotSupportedTask
 
@@ -29,14 +29,10 @@ class Benchmark:
         return benchmark
 
     @property
-    def output_format(self):
-        return self._dataset_info.output_format
+    def dataset_format(self):
+        return self._dataset_info.dataset_format
 
-    @property
-    def input_format(self):
-        return self._dataset_info.input_format
-
-    def get_existing_benchmarks(self) -> Dict[Str, List[Tuple[str, int]]]:
+    def get_existing_benchmarks(self) -> Dict[str, List[Tuple[str, int]]]:
         pass
 
     def run(self, task: str, metrics: List[str]):
@@ -46,27 +42,29 @@ class Benchmark:
                   Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
         """
         predictions = self._callback(self._dataset_info)
-        targets = self._dataset.targets
-        metric_calculator = None
+        targets = self._dataset_info.targets
 
         if task == 'regression':
             metric_calculator = RegressionMetrics(predictions, targets)
-        elif task  == 'classification':
+        elif task == 'classification':
             metric_calculator = ClassificationMetrics(predictions, targets)
         else:
             raise NotSupportedTask('This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
 
-
         results = []
         for metric in metrics:
-            results.append((metric, metric_calculator.calculate_metric(metric))
+            results.append((metric, metric_calculator.calculate_metric(metric)))
 
+        print(results)
         return results
-
-        print(user_model_result)
         # actual benchmark here
 
 
+def callback(ds: DatasetInfo):
+    return [0.55] * len(ds.data['label'])
+
 if __name__ == '__main__':
-    benchmark = Benchmark.load(DatasetEnum.CIFAR10, lambda x: print(x), reload_cache=True)
-    print(benchmark.output_format)
+    benchmark = Benchmark.load(DatasetEnum.SST, callback, reload_cache=False)
+    print(benchmark.dataset_format)
+    benchmark.run(task='regression',
+                  metrics=['mae', 'mse', 'rmse', 'r2'])
