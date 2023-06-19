@@ -32,6 +32,10 @@ class Benchmark:
     def dataset_format(self):
         return self._dataset_info.dataset_format
 
+    @property
+    def input_format(self):
+        return self._dataset_info.input_format
+
     def get_existing_benchmarks(self) -> Dict[str, List[Tuple[str, int]]]:
         pass
 
