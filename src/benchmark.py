@@ -35,11 +35,12 @@ class Benchmark:
     def get_existing_benchmarks(self) -> Dict[str, List[Tuple[str, int]]]:
         pass
 
-    def run(self, task: str, metrics: List[str]):
+    def run(self, task: str, metrics: List[str], custom_metric = None):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
                   Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
+        :custom_metric: your python function to calculate a metric of your preference
         """
         predictions = self._callback(self._dataset_info)
         targets = self._dataset_info.targets
@@ -55,9 +56,44 @@ class Benchmark:
         for metric in metrics:
             results.append((metric, metric_calculator.calculate_metric(metric)))
 
-        print(results)
+        if custom_metric:
+            results.append((custom_metric.__name__, custom_metric(predictions, targets)))
+
         return results
-        # actual benchmark here
+
+
+class CustomBenchmark:
+    """
+    Benchmark on a custom dataset on a single or multiple models
+    """
+
+    def __init__(self, features: List[any], targets: List[any]):
+        self._features = features
+        self.targets = targets
+
+    def run(self, model: any, metrics: List[str], custom_metric = None):
+        """
+        :task: ['regression', 'classification']
+        :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
+                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
+        :custom_metric: your python function to calculate a metric of your preference
+        """
+
+        if task == 'regression':
+            metric_calculator = RegressionMetrics(predictions, targets)
+        elif task  == 'classification':
+            metric_calculator = ClassificationMetrics(predictions, targets)
+        else:
+            raise NotSupportedTask('This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
+
+        results = []
+        for metric in metrics:
+            results.append((metric, metric_calculator.calculate_metric(metric))
+
+        if custom_metric:
+            results.append((custom_metric.__name__, custom_metric(predictions, targets)))
+
+        return results
 
 
 def callback(ds: DatasetInfo):
