@@ -13,7 +13,7 @@ class Benchmark:
         self._dataset_info: Union[DatasetInfo, None] = None
 
     @staticmethod
-    def load(dataset: DatasetEnum, callback: Callable[[DatasetInfo], any], reload_cache: bool=False) -> 'Benchmark':
+    def load(dataset: DatasetEnum, callback: Callable[[DatasetInfo], any], reload_cache: bool = False) -> 'Benchmark':
         '''
         Load a specified dataset
         :param dataset: instance of DatasetBase. Use DatasetEnum
@@ -35,11 +35,11 @@ class Benchmark:
     def get_existing_benchmarks(self) -> Dict[str, List[Tuple[str, int]]]:
         pass
 
-    def run(self, task: str, metrics: List[str], custom_metric = None):
+    def run(self, task: str, metrics: List[str], custom_metric=None):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
-                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
+                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2_score']
         :custom_metric: your python function to calculate a metric of your preference
         """
         predictions = self._callback(self._dataset_info)
@@ -50,7 +50,8 @@ class Benchmark:
         elif task == 'classification':
             metric_calculator = ClassificationMetrics(predictions, targets)
         else:
-            raise NotSupportedTask('This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
+            raise NotSupportedTask(
+                'This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
 
         results = []
         for metric in metrics:
@@ -71,24 +72,28 @@ class CustomBenchmark:
         self._features = features
         self.targets = targets
 
-    def run(self, model: any, metrics: List[str], custom_metric = None):
+    def run(self, task: str, model: any, metrics: List[str], custom_metric=None):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
-                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2']
+                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2_score']
         :custom_metric: your python function to calculate a metric of your preference
         """
 
+        predictions = self._features
+        targets = self.targets
+
         if task == 'regression':
             metric_calculator = RegressionMetrics(predictions, targets)
-        elif task  == 'classification':
+        elif task == 'classification':
             metric_calculator = ClassificationMetrics(predictions, targets)
         else:
-            raise NotSupportedTask('This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
+            raise NotSupportedTask(
+                'This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
 
         results = []
         for metric in metrics:
-            results.append((metric, metric_calculator.calculate_metric(metric))
+            results.append((metric, metric_calculator.calculate_metric(metric)))
 
         if custom_metric:
             results.append((custom_metric.__name__, custom_metric(predictions, targets)))
@@ -99,8 +104,10 @@ class CustomBenchmark:
 def callback(ds: DatasetInfo):
     return [0.55] * len(ds.data['label'])
 
+
 if __name__ == '__main__':
     benchmark = Benchmark.load(DatasetEnum.SST, callback, reload_cache=False)
     print(benchmark.dataset_format)
-    benchmark.run(task='regression',
-                  metrics=['mae', 'mse', 'rmse', 'r2'])
+    metrics_results = benchmark.run(task='regression',
+                                    metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    print(metrics_results)
