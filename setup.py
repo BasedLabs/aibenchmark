@@ -6,7 +6,7 @@ setup(
     license='MIT',
     author="Based Labs",
     author_email='',
-    packages=find_packages('src/aibenchmark'),
+    packages=find_packages('src'),
     package_dir={'': 'src'},
     url='https://github.com/BasedLabs/aibenchmark/',
     keywords='ai benchmark metrics',
