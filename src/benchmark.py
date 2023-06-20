@@ -78,7 +78,9 @@ def callback(ds: DatasetInfo):
 
 
 if __name__ == '__main__':
-    benchmark = Benchmark(DatasetsList.Images.CIFAR10, callback, reload_cache=True)
+    print(list(DatasetsList.get_available_datasets()))
+
+    benchmark = Benchmark(DatasetsList.Texts.SST, callback, reload_cache=True)
     print(benchmark.dataset_format)
     metrics_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score'])
     print(metrics_results)

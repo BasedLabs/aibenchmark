@@ -73,6 +73,7 @@ class GoogleDriveDataset(DatasetBase, ABC):
         logging.info(f'Loading dataset {self.file_name} from google drive')
         file_id = self.url.replace('https://drive.google.com/file/d/','')
         file_id = file_id.replace('/view?usp=drive_link', '')
+        file_id = file_id.replace('/view?usp=sharing', '')
         download_url = f'https://drive.google.com/uc?id={file_id}'
 
         gdown.download(url=download_url, output=download_file_path, quiet=False)
@@ -124,7 +125,7 @@ class PapersWithCodeHuggingFaceDataset(GoogleDriveDataset):
 
 class TextsDatasetsList:
     SST = PapersWithCodeHuggingFaceDataset(
-        url='https://drive.google.com/file/d/1jvlSyfom_0oBd1D2PtZDjab7waX_WwxE/view?usp=sharing',
+        url='https://drive.google.com/file/d/1jvlSyfom_0oBd1D2PtZDjab7waX_WwxE/view?usp=drive_link',
         file_name="1-2-dataset-sst.json")
     MultiNli = PapersWithCodeHuggingFaceDataset(
         url='https://drive.google.com/file/d/1n-Oqd5tCm-X12A1aB5u2nXMrifb5NicP/view?usp=sharing',
@@ -194,3 +195,12 @@ class ImagesDatasetsList:
 class DatasetsList:
     Texts: TextsDatasetsList = TextsDatasetsList
     Images: ImagesDatasetsList = ImagesDatasetsList
+
+    @staticmethod
+    def get_available_datasets():
+        for key in DatasetsList.Texts.__dict__:
+            if '__' not in key: # builtin method
+                yield 'DatasetsList.Texts.' + key
+        for key in DatasetsList.Images.__dict__:
+            if '__' not in key: # builtin method
+                yield 'DatasetsList.Images.' + key
