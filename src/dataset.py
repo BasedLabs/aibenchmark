@@ -3,7 +3,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import List
+from typing import List, Iterable
 
 import gdown
 from datasets import load_dataset
@@ -25,12 +25,14 @@ class BenchmarkData:
 
 
 class DatasetInfo:
-    def __init__(self, dataset_format: any,
-                 data: any, targets: any,
+    def __init__(self,
+                 dataset_format: any,
+                 data: any,
+                 ground_truth: any,
                  benchmarks_data: List[BenchmarkData]):
         self.dataset_format = dataset_format
         self.data = data
-        self.targets = targets
+        self.ground_truth = ground_truth
         self.benchmarks_data = benchmarks_data
 
 
@@ -38,6 +40,21 @@ class DatasetBase(ABC):
     @abstractmethod
     def load(self, reload_cache: bool = False) -> DatasetInfo:
         pass
+
+
+class CustomDataset(DatasetBase):
+    def __init__(self, ground_truth: Iterable):
+        self._ground_truth = ground_truth
+
+    def load(self, reload_cache: bool = False) -> DatasetInfo:
+        dataset_info = DatasetInfo(
+            dataset_format='custom dataset',
+            data=[],
+            ground_truth=self._ground_truth,
+            benchmarks_data=[]
+        )
+
+        return dataset_info
 
 
 class GoogleDriveDataset(DatasetBase, ABC):
@@ -76,15 +93,15 @@ class PapersWithCodeHuggingFaceDataset(GoogleDriveDataset):
         logging.info('Loading dataset from hugging face')
         dataset = load_dataset(huggingface_dataset_name)
         test_data = dataset['test'] if 'test' in dataset['test'] else dataset['validation']
-        targets = test_data.data['label'] if 'label' in test_data.data.column_names else test_data.data['feature']
+        ground_truth = test_data.data['label'] if 'label' in test_data.data.column_names else test_data.data['feature']
         dataset_info = DatasetInfo(dataset_format=test_data.features,
                                    data=test_data,
-                                   targets=targets,
+                                   ground_truth=ground_truth,
                                    benchmarks_data=benchmarks)
         return dataset_info
 
 
-class DatasetEnum(Enum):
+class DatasetsList:
     SST = PapersWithCodeHuggingFaceDataset(
         url="https://drive.google.com/uc?id=1jvlSyfom_0oBd1D2PtZDjab7waX_WwxE",
         file_name="dataset-sst.json")

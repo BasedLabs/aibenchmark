@@ -3,3 +3,7 @@ class NotSupportableDecompressionFileFormat(Exception):
 
 class NotSupportedTask(Exception):
     pass
+
+
+class NotSupportedMetric(Exception):
+    pass

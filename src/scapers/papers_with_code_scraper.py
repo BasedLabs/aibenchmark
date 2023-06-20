@@ -28,8 +28,8 @@ class PapersWithCodeDatasetScraper:
                     break
 
     def scrape(self, url, max_pages=1):
-        if not os.path.isdir('papers_with_code_data/texts'):
-            os.makedirs('papers_with_code_data/texts')
+        if not os.path.isdir('papers_with_code_data/images'):
+            os.makedirs('papers_with_code_data/images')
         page = 1
         base_url = 'https://paperswithcode.com'
         page_link = url + f'&page={page}'
@@ -38,7 +38,7 @@ class PapersWithCodeDatasetScraper:
             tree = fromstring(page_content.text)
             hrefs = tree.xpath("//div[@class='dataset-wide-box']//a/@href")
             for k, href in enumerate(hrefs):
-                if os.path.isfile(f'papers_with_code_data/texts/{i}-{k}-{slugify(href)}.json'):
+                if os.path.isfile(f'papers_with_code_data/images/{i}-{k}-{slugify(href)}.json'):
                     continue
                 sleep(3)
                 print(f'Scraping {href}')
@@ -64,9 +64,9 @@ class PapersWithCodeDatasetScraper:
                             'table': table_data,
                             'sota': sota_page_details
                         })
-                    with open(f'papers_with_code_data/texts/{i}-{k}-{slugify(href)}.json', 'w') as f:
+                    with open(f'papers_with_code_data/images/{i}-{k}-{slugify(href)}.json', 'w') as f:
                         json.dump(j, f)
 
 
 if __name__ == '__main__':
-    PapersWithCodeDatasetScraper().scrape('https://paperswithcode.com/datasets?mod=texts', 5)
+    PapersWithCodeDatasetScraper().scrape('https://paperswithcode.com/datasets?mod=images', 5)

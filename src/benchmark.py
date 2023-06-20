@@ -1,45 +1,28 @@
 import logging
-from typing import Callable, Union, List, Tuple, Dict
+from typing import Callable, Union, List, Tuple, Dict, Iterable
 
-from src.dataset import DatasetBase, DatasetInfo, DatasetEnum
+from src.dataset import DatasetBase, DatasetInfo, DatasetsList, CustomDataset, BenchmarkData
 from src.metrics import RegressionMetrics, ClassificationMetrics
-from src.exceptions import NotSupportedTask
+from src.exceptions import NotSupportedTask, NotSupportedMetric
 
 
 class Benchmark:
-    def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any]):
+    def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any], reload_cache: bool = False):
         self._dataset: DatasetBase = dataset
         self._callback = callback
-        self._dataset_info: Union[DatasetInfo, None] = None
-
-    @staticmethod
-    def load(dataset: DatasetEnum, callback: Callable[[DatasetInfo], any], reload_cache: bool = False) -> 'Benchmark':
-        '''
-        Load a specified dataset
-        :param dataset: instance of DatasetBase. Use DatasetEnum
-        :param callback:
-        :return:
-        '''
-        benchmark = Benchmark(dataset=dataset.value,
-                              callback=callback)
         logging.info(f'Initializing dataset {dataset}')
         if reload_cache:
             logging.info('reload_cache parameter is enabled. This will reload dataset from server')
-        benchmark._dataset_info = benchmark._dataset.load(reload_cache=reload_cache)
-        return benchmark
+        self._dataset_info: Union[DatasetInfo, None] = dataset.load(reload_cache=reload_cache)
 
     @property
     def dataset_format(self):
         return self._dataset_info.dataset_format
 
-    @property
-    def input_format(self):
-        return self._dataset_info.input_format
+    def get_existing_benchmarks(self) -> List[BenchmarkData]:
+        return self._dataset_info.benchmarks_data
 
-    def get_existing_benchmarks(self) -> Dict[str, List[Tuple[str, int]]]:
-        pass
-
-    def run(self, task: str, metrics: List[str], custom_metric=None):
+    def run(self, metrics: List[str], custom_metric_calculator: Callable[[Iterable, Iterable], any] = None):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
@@ -47,62 +30,46 @@ class Benchmark:
         :custom_metric: your python function to calculate a metric of your preference
         """
         predictions = self._callback(self._dataset_info)
-        targets = self._dataset_info.targets
+        targets = self._dataset_info.ground_truth
 
-        if task == 'regression':
-            metric_calculator = RegressionMetrics(predictions, targets)
-        elif task == 'classification':
-            metric_calculator = ClassificationMetrics(predictions, targets)
-        else:
-            raise NotSupportedTask(
-                'This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
+        metrics_with_calculators = {
+            'accuracy': ClassificationMetrics(predictions, targets),
+            'precision': ClassificationMetrics(predictions, targets),
+            'recall': ClassificationMetrics(predictions, targets),
+            'f1_score': ClassificationMetrics(predictions, targets),
+            'mae': RegressionMetrics(predictions, targets),
+            'mse': RegressionMetrics(predictions, targets),
+            'rmse': RegressionMetrics(predictions, targets),
+            'r2_score': RegressionMetrics(predictions, targets)
+        }
+
+        for metric in metrics:
+            if metric not in metrics_with_calculators:
+                raise NotSupportedMetric(
+                    f'{metric}: This kind of metric is not currently supported, use Benchmark.run_custom(data, metric_function) or run(data, custom_metric))')
 
         results = []
         for metric in metrics:
+            metric_calculator = metrics_with_calculators[metric]
             results.append((metric, metric_calculator.calculate_metric(metric)))
 
-        if custom_metric:
-            results.append((custom_metric.__name__, custom_metric(predictions, targets)))
+        if custom_metric_calculator:
+            results.append((custom_metric_calculator.__name__, custom_metric_calculator(predictions, targets)))
 
         return results
 
 
-class CustomBenchmark:
+# targets ground_truth
+# features predicted
+class CustomBenchmark(Benchmark):
     """
     Benchmark on a custom dataset on a single or multiple models
     """
+    def __init__(self, ground_truth: Iterable, predicted: Iterable):
+        self._predicted = predicted
+        self._ground_truth = ground_truth
 
-    def __init__(self, features: List[any], targets: List[any]):
-        self._features = features
-        self.targets = targets
-
-    def run(self, task: str, model: any, metrics: List[str], custom_metric=None):
-        """
-        :task: ['regression', 'classification']
-        :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
-                  Available regression metrics: ['mae', 'mse', 'rmse', 'r2_score']
-        :custom_metric: your python function to calculate a metric of your preference
-        """
-
-        predictions = self._features
-        targets = self.targets
-
-        if task == 'regression':
-            metric_calculator = RegressionMetrics(predictions, targets)
-        elif task == 'classification':
-            metric_calculator = ClassificationMetrics(predictions, targets)
-        else:
-            raise NotSupportedTask(
-                'This kind of task is not currently supported, use Benchmark.run_custom(data, metric_function)')
-
-        results = []
-        for metric in metrics:
-            results.append((metric, metric_calculator.calculate_metric(metric)))
-
-        if custom_metric:
-            results.append((custom_metric.__name__, custom_metric(predictions, targets)))
-
-        return results
+        super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
 
 
 def callback(ds: DatasetInfo):
@@ -110,8 +77,12 @@ def callback(ds: DatasetInfo):
 
 
 if __name__ == '__main__':
-    benchmark = Benchmark.load(DatasetEnum.SST, callback, reload_cache=False)
+    benchmark = Benchmark(DatasetsList.SST, callback, reload_cache=False)
     print(benchmark.dataset_format)
-    metrics_results = benchmark.run(task='regression',
-                                    metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    metrics_results = benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    print(metrics_results)
+
+    custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
+    print(custom_benchmark.dataset_format)
+    metrics_results = custom_benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
     print(metrics_results)
