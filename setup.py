@@ -1,13 +1,15 @@
 from setuptools import setup, find_packages
 
+print(find_packages('src'))
+
 setup(
     name='aibenchmark',
     version='0.0.1',
     license='MIT',
     author="Based Labs",
     author_email='',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=['', 'scrapers'],
+    package_dir={'': 'src/aibenchmark'},
     url='https://github.com/BasedLabs/aibenchmark/',
     keywords='ai benchmark metrics',
     install_requires=[
