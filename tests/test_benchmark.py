@@ -4,9 +4,8 @@ from src.benchmark import Benchmark
 from src.dataset import DatasetInfo, DatasetsList
 
 
-def sst_callback(ds: DatasetInfo) -> List[float]:
-    return [0.55] * len(ds.data['label'])
-
+def sst_callback(dataset: DatasetInfo) -> List[float]:
+    return [0.55] * len(dataset.data['label'])
 
 def test_benchmark():
     benchmark = Benchmark(DatasetsList.Texts.SST, sst_callback)
@@ -16,10 +15,8 @@ def test_benchmark():
     assert (benchmark.dataset_info.dataset_link == "https://huggingface.co/datasets/sst")
     assert (benchmark.dataset_info.dataset_info_link == "https://paperswithcode.com/dataset/sst")
 
-
-def cifar10_callback(ds: DatasetInfo):
-    return [1 for _ in range(len(ds.data['label']))]
-
+def cidar10_callback(dataset: DatasetInfo):
+    return [1 for _ in range(len(dataset.data['label']))]
 
 def test_cifar10_benchmark():
     benchmark = Benchmark(DatasetsList.Images.CIFAR10, cifar10_callback)

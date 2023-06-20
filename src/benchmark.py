@@ -70,3 +70,9 @@ class CustomBenchmark(Benchmark):
         self.ground_truth = ground_truth
 
         super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
+
+if __name__ == '__main__':
+    custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
+    print(custom_benchmark.dataset_format)
+    metrics_results = custom_benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    print(metrics_results)
