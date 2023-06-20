@@ -1,6 +1,6 @@
 import py7zr
 
-from src.exceptions import NotSupportableDecompressionFileFormat
+from aibenchmark.exceptions import NotSupportableDecompressionFileFormat
 
 
 def decompress_7z(file_path: str, destination_folder_path: str):

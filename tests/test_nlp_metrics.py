@@ -1,5 +1,5 @@
 import pytest
-from src.metrics import NLPMetrics
+from aibenchmark.metrics import NLPMetrics
 
 @pytest.fixture
 def nlp_metrics():

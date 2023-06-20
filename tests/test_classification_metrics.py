@@ -2,7 +2,7 @@ import pytest
 import torch
 import tensorflow as tf
 import pandas as pd
-from src.metrics import ClassificationMetrics
+from aibenchmark.metrics import ClassificationMetrics
 
 @pytest.fixture
 def binary_data():

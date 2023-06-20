@@ -1,9 +1,9 @@
 import logging
 from typing import Callable, Union, List, Iterable
 
-from src.dataset import DatasetBase, DatasetInfo, CustomDataset, BenchmarkData
-from src.exceptions import NotSupportedMetric
-from src.metrics import RegressionMetrics, ClassificationMetrics
+from aibenchmark.dataset import DatasetBase, DatasetInfo, CustomDataset, BenchmarkData
+from aibenchmark.exceptions import NotSupportedMetric
+from aibenchmark.metrics import RegressionMetrics, ClassificationMetrics
 
 
 class Benchmark:

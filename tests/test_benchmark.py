@@ -1,7 +1,7 @@
 from typing import List
 
-from src.benchmark import Benchmark
-from src.dataset import DatasetInfo, DatasetsList
+from aibenchmark.benchmark import Benchmark
+from aibenchmark.dataset import DatasetInfo, DatasetsList
 
 
 def sst_callback(dataset: DatasetInfo) -> List[float]:
@@ -15,7 +15,7 @@ def test_benchmark():
     assert (benchmark.dataset_info.dataset_link == "https://huggingface.co/datasets/sst")
     assert (benchmark.dataset_info.dataset_info_link == "https://paperswithcode.com/dataset/sst")
 
-def cidar10_callback(dataset: DatasetInfo):
+def cifar10_callback(dataset: DatasetInfo):
     return [1 for _ in range(len(dataset.data['label']))]
 
 def test_cifar10_benchmark():

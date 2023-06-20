@@ -1,6 +1,6 @@
 import pytest
 import torch
-from src.metrics import RegressionMetrics
+from aibenchmark.metrics import RegressionMetrics
 
 @pytest.fixture
 def regression_data():

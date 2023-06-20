@@ -7,7 +7,7 @@ from typing import List, Iterable
 import gdown
 from datasets import load_dataset
 
-from src.exceptions import TestDataNotFoundInHuggingFaceDataset
+from aibenchmark.exceptions import TestDataNotFoundInHuggingFaceDataset
 
 datasets_download_dir = 'downloads'
 
