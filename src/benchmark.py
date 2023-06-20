@@ -73,18 +73,9 @@ class CustomBenchmark(Benchmark):
         super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
 
 
-def callback(ds: DatasetInfo):
-    return ['airplane' for _ in range(len(ds.data['label']))]
 
 
 if __name__ == '__main__':
-    print(list(DatasetsList.get_available_datasets()))
-
-    benchmark = Benchmark(DatasetsList.Texts.SST, callback, reload_cache=True)
-    print(benchmark.dataset_format)
-    metrics_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score'])
-    print(metrics_results)
-
     custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
     print(custom_benchmark.dataset_format)
     metrics_results = custom_benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
