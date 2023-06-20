@@ -7,3 +7,7 @@ class NotSupportedTask(Exception):
 
 class NotSupportedMetric(Exception):
     pass
+
+
+class TestDataNotFoundInHuggingFaceDataset(Exception):
+    pass

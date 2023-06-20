@@ -1,9 +1,10 @@
 import logging
-from typing import Callable, Union, List, Tuple, Dict, Iterable
+import random
+from typing import Callable, Union, List, Iterable
 
 from src.dataset import DatasetBase, DatasetInfo, DatasetsList, CustomDataset, BenchmarkData
+from src.exceptions import NotSupportedMetric
 from src.metrics import RegressionMetrics, ClassificationMetrics
-from src.exceptions import NotSupportedTask, NotSupportedMetric
 
 
 class Benchmark:
@@ -73,13 +74,13 @@ class CustomBenchmark(Benchmark):
 
 
 def callback(ds: DatasetInfo):
-    return [0.55] * len(ds.data['label'])
+    return ['airplane' for _ in range(len(ds.data['label']))]
 
 
 if __name__ == '__main__':
-    benchmark = Benchmark(DatasetsList.SST, callback, reload_cache=False)
+    benchmark = Benchmark(DatasetsList.Images.CIFAR10, callback, reload_cache=True)
     print(benchmark.dataset_format)
-    metrics_results = benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    metrics_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score'])
     print(metrics_results)
 
     custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
