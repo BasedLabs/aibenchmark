@@ -6,7 +6,7 @@
   <!-- <a href="https://aibenchmark.netlify.app">Demo</a> -->
 </div>
 
-<h1 align="center">AIBenchmark</h1>
+<h1 align="center">AIBenchmark (NOT RELEASED, STILL IN PROGRESS)</h1>
 <h2 align="center">Benchmark your model against other models</h2>
 
 <p align="center">
