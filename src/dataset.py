@@ -108,6 +108,7 @@ class PapersWithCodeHuggingFaceDataset(GoogleDriveDataset):
 
     def load(self) -> DatasetInfo:
         logging.info('Loading benchmarks data')
+        self.download_from_google_drive(self.download_file_path)
         json_content = json.load(open(self.download_file_path, 'r'))
         benchmarks = []
         huggingface_dataset_name = json_content[0]['hugging_face_dataset_name']
