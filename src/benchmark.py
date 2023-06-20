@@ -22,7 +22,7 @@ class Benchmark:
 
     def run(self, metrics: List[str],
             custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
-            average="binary"):
+            average = "binary"):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
