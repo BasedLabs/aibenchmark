@@ -3,26 +3,26 @@
 
   &#xa0;
 
-  <!-- <a href="https://nolabs.netlify.app">Demo</a> -->
+  <!-- <a href="https://aibenchmark.netlify.app">Demo</a> -->
 </div>
 
 <h1 align="center">AIBenchmark</h1>
-<h2 align="center">Benchmark your model against popular benchmarks</h2>
+<h2 align="center">Benchmark your model against other models</h2>
 
 <p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/BasedLabs/nolabs?color=56BEB8">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/BasedLabs/aibenchmark?color=56BEB8">
 
-  <img alt="Github language count" src="https://img.shields.io/github/languages/count/BasedLabs/nolabs?color=56BEB8">
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/BasedLabs/aibenchmark?color=56BEB8">
 
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/BasedLabs/nolabs?color=56BEB8">
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/BasedLabs/aibenchmark?color=56BEB8">
 
-  <img alt="License" src="https://img.shields.io/github/license/BasedLabs/nolabs?color=56BEB8">
+  <img alt="License" src="https://img.shields.io/github/license/BasedLabs/aibenchmark?color=56BEB8">
 
-  <!-- <img alt="Github issues" src="https://img.shields.io/github/issues/BasedLabs/nolabs?color=56BEB8" /> -->
+  <!-- <img alt="Github issues" src="https://img.shields.io/github/issues/BasedLabs/aibenchmark?color=56BEB8" /> -->
 
-  <!-- <img alt="Github forks" src="https://img.shields.io/github/forks/BasedLabs/nolabs?color=56BEB8" /> -->
+  <!-- <img alt="Github forks" src="https://img.shields.io/github/forks/BasedLabs/aibenchmark?color=56BEB8" /> -->
 
-  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/BasedLabs/nolabs?color=56BEB8" /> -->
+  <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/BasedLabs/aibenchmark?color=56BEB8" /> -->
 </p>
 
 <!-- Status -->
@@ -46,23 +46,47 @@
 
 ## About ##
 
-NoLabs is an open source bioengine with support of web visualisation and hosting.
+AIBenchmark is a package which lets you quickly get the benchmark of your model based on the popular datasets and compare with existing leaderboard. It also has a nice collection of metrics which you could easily import.
+
+We currently support 14 text-based and 2 image-based datasets for AutoBenchmarking aiming for regression/classification tasks. Available datasets could be found in src/dataset.py file. 
+
+Code example:
+
+```python
+from aibenchmark.benchmark import Benchmark
+from aibenchmark.dataset import DatasetInfo, DatasetsList
+
+model = torch.load(...)
+
+def create_predictions(dataset: DatasetInfo) -> List[float]:
+    # Sample code
+    train_data = dataset.data['Texts']
+
+    # Implement your code based on 
+    outputs = model.predict(train_data)
+    return outputs
+
+
+benchmark = Benchmark(DatasetsList.Texts.SST, create_predictions)
+
+# Results of your model based on predictions
+benchmark_results = benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score']) 
+
+# Existing leaderboard for this dataset
+print(benchmark.get_existing_benchmarks())
+```
 
 ## Features ##
 
-1) Prediction of subcellular localisation via fine-tuned [ritakurban/ESM_protein_localization](https://huggingface.co/ritakurban/ESM_protein_localization) model (to be updated with a better model)
-
-2) Prediction of folded structure via [facebook/esmfold_v1](https://huggingface.co/facebook/esmfold_v1)
-
-3) Inference of multiple proteins with saving to csv file (next week)
-
-4) Docker containerisation for easy hosting
+1) Fast comparison of metrics of your model and other SOTA models for particular dataset
+2) Supporting 16+ most populat datasets, the list is always updating. Soon we willl support more than 1000 datasets
+3) All metrics in one place for any type of data - numpy, torch Tensors, tensorflow tensors, python lists
 
 ## Starting ##
 
 ```bash
 # Clone this project
-$ git clone https://github.com/BasedLabs/aibenchmark
+$ pip install https://github.com/BasedLabs/aibenchmark
 
 # Access
 $ cd aibenchmark
