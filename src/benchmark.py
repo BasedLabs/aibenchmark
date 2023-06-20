@@ -23,21 +23,24 @@ class Benchmark:
     def get_existing_benchmarks(self) -> List[BenchmarkData]:
         return self.dataset_info.benchmarks_data
 
-    def run(self, metrics: List[str], custom_metric_calculator: Callable[[Iterable, Iterable], any] = None):
+    def run(self, metrics: List[str], 
+            custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
+            average = "binary"):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
                   Available regression metrics: ['mae', 'mse', 'rmse', 'r2_score']
-        :custom_metric: your python function to calculate a metric of your preference
+        :custom_metric: Your python function to calculate a metric of your preference
+        :average: For classification, choose one of the available methods {'micro', 'macro', 'samples', 'weighted', 'binary'} or None
         """
         predictions = self.callback(self.dataset_info)
         targets = self.dataset_info.ground_truth
 
         metrics_with_calculators = {
-            'accuracy': ClassificationMetrics(predictions, targets),
-            'precision': ClassificationMetrics(predictions, targets),
-            'recall': ClassificationMetrics(predictions, targets),
-            'f1_score': ClassificationMetrics(predictions, targets),
+            'accuracy': ClassificationMetrics(predictions, targets, average=average),
+            'precision': ClassificationMetrics(predictions, targets, average=average),
+            'recall': ClassificationMetrics(predictions, targets, average=average),
+            'f1_score': ClassificationMetrics(predictions, targets, average=average),
             'mae': RegressionMetrics(predictions, targets),
             'mse': RegressionMetrics(predictions, targets),
             'rmse': RegressionMetrics(predictions, targets),

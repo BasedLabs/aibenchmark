@@ -77,6 +77,7 @@ class GoogleDriveDataset(DatasetBase, ABC):
         logging.info(f'Loading dataset {self.file_name} from google drive')
         file_id = self.url.replace('https://drive.google.com/file/d/','')
         file_id = file_id.replace('/view?usp=drive_link', '')
+        file_id = file_id.replace('/view?usp=sharing', '')
         download_url = f'https://drive.google.com/uc?id={file_id}'
 
         gdown.download(url=download_url, output=download_file_path, quiet=False)
