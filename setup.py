@@ -7,7 +7,7 @@ setup(
     author="Based Labs",
     author_email='',
     packages=find_packages('src/aibenchmark'),
-    package_dir={'': 'src'},
+    package_dir={'': 'src/aibenchmark'},
     url='https://github.com/BasedLabs/aibenchmark/',
     keywords='ai benchmark metrics',
     install_requires=[
