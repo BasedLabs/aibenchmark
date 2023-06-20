@@ -1,20 +1,17 @@
 import logging
-import random
 from typing import Callable, Union, List, Iterable
 
-from src.dataset import DatasetBase, DatasetInfo, DatasetsList, CustomDataset, BenchmarkData
+from src.dataset import DatasetBase, DatasetInfo, CustomDataset, BenchmarkData
 from src.exceptions import NotSupportedMetric
 from src.metrics import RegressionMetrics, ClassificationMetrics
 
 
 class Benchmark:
-    def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any], reload_cache: bool = False):
+    def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any]):
         self.dataset: DatasetBase = dataset
         self.callback = callback
         logging.info(f'Initializing dataset {dataset}')
-        if reload_cache:
-            logging.info('reload_cache parameter is enabled. This will reload dataset from server')
-        self.dataset_info: Union[DatasetInfo, None] = dataset.load(reload_cache=reload_cache)
+        self.dataset_info: Union[DatasetInfo, None] = dataset.load()
 
     @property
     def dataset_format(self):
@@ -23,9 +20,9 @@ class Benchmark:
     def get_existing_benchmarks(self) -> List[BenchmarkData]:
         return self.dataset_info.benchmarks_data
 
-    def run(self, metrics: List[str], 
+    def run(self, metrics: List[str],
             custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
-            average = "binary"):
+            average="binary"):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
@@ -62,30 +59,14 @@ class Benchmark:
 
         return results
 
+
 class CustomBenchmark(Benchmark):
     """
     Benchmark on a custom dataset on a single or multiple models
     """
+
     def __init__(self, ground_truth: Iterable, predicted: Iterable):
         self.predicted = predicted
         self.ground_truth = ground_truth
 
         super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
-
-
-def callback(ds: DatasetInfo):
-    return ['airplane' for _ in range(len(ds.data['label']))]
-
-
-if __name__ == '__main__':
-    print(list(DatasetsList.get_available_datasets()))
-
-    benchmark = Benchmark(DatasetsList.Texts.SST, callback, reload_cache=True)
-    print(benchmark.dataset_format)
-    metrics_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score'])
-    print(metrics_results)
-
-    custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
-    print(custom_benchmark.dataset_format)
-    metrics_results = custom_benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
-    print(metrics_results)

@@ -43,7 +43,7 @@ class DatasetInfo:
 
 class DatasetBase(ABC):
     @abstractmethod
-    def load(self, reload_cache: bool = False) -> DatasetInfo:
+    def load(self) -> DatasetInfo:
         pass
 
 
@@ -51,7 +51,7 @@ class CustomDataset(DatasetBase):
     def __init__(self, ground_truth: Iterable):
         self._ground_truth = ground_truth
 
-    def load(self, reload_cache: bool = False) -> DatasetInfo:
+    def load(self) -> DatasetInfo:
         dataset_info = DatasetInfo(
             dataset_format='custom dataset',
             data=[],
@@ -70,16 +70,18 @@ class GoogleDriveDataset(DatasetBase, ABC):
         self.download_file_path = os.path.join(datasets_download_dir, file_name)
 
     @abstractmethod
-    def load(self, reload_cache: bool = False) -> DatasetInfo:
+    def load(self) -> DatasetInfo:
         pass
+
+    def cleanup_google_drive_download_link(self, url):
+        file_id = url.replace('https://drive.google.com/file/d/', '')
+        file_id = file_id.replace('/view?usp=drive_link', '')
+        file_id = file_id.replace('/view?usp=sharing', '')
+        return f'https://drive.google.com/uc?id={file_id}'
 
     def download_from_google_drive(self, download_file_path: str):
         logging.info(f'Loading dataset {self.file_name} from google drive')
-        file_id = self.url.replace('https://drive.google.com/file/d/','')
-        file_id = file_id.replace('/view?usp=drive_link', '')
-        file_id = file_id.replace('/view?usp=sharing', '')
-        download_url = f'https://drive.google.com/uc?id={file_id}'
-
+        download_url = self.cleanup_google_drive_download_link(self.url)
         gdown.download(url=download_url, output=download_file_path, quiet=False)
         logging.info(f'Loading dataset {self.file_name} from google drive completed')
 
@@ -104,10 +106,8 @@ class PapersWithCodeHuggingFaceDataset(GoogleDriveDataset):
 
         raise TestDataNotFoundInHuggingFaceDataset()
 
-    def load(self, reload_cache: bool = True) -> DatasetInfo:
+    def load(self) -> DatasetInfo:
         logging.info('Loading benchmarks data')
-        if reload_cache:
-            self.download_from_google_drive(self.download_file_path)
         json_content = json.load(open(self.download_file_path, 'r'))
         benchmarks = []
         huggingface_dataset_name = json_content[0]['hugging_face_dataset_name']
