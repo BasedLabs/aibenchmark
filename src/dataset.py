@@ -30,11 +30,15 @@ class DatasetInfo:
                  dataset_format: any,
                  data: any,
                  ground_truth: any,
-                 benchmarks_data: List[BenchmarkData]):
+                 benchmarks_data: List[BenchmarkData],
+                 dataset_link = "",
+                 dataset_info_link = ""):
         self.dataset_format = dataset_format
         self.data = data
         self.ground_truth = ground_truth
         self.benchmarks_data = benchmarks_data
+        self.dataset_link = dataset_link
+        self.dataset_info_link = dataset_info_link
 
 
 class DatasetBase(ABC):
@@ -119,7 +123,9 @@ class PapersWithCodeHuggingFaceDataset(GoogleDriveDataset):
         dataset_info = DatasetInfo(dataset_format=test_data.features,
                                    data=test_data,
                                    ground_truth=ground_truth,
-                                   benchmarks_data=benchmarks)
+                                   benchmarks_data=benchmarks,
+                                   dataset_link = json_content[0]['hugging_face'],
+                                   dataset_info_link= json_content[0]['dataset_page_url'])
         return dataset_info
 
 

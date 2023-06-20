@@ -9,35 +9,38 @@ from src.metrics import RegressionMetrics, ClassificationMetrics
 
 class Benchmark:
     def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any], reload_cache: bool = False):
-        self._dataset: DatasetBase = dataset
-        self._callback = callback
+        self.dataset: DatasetBase = dataset
+        self.callback = callback
         logging.info(f'Initializing dataset {dataset}')
         if reload_cache:
             logging.info('reload_cache parameter is enabled. This will reload dataset from server')
-        self._dataset_info: Union[DatasetInfo, None] = dataset.load(reload_cache=reload_cache)
+        self.dataset_info: Union[DatasetInfo, None] = dataset.load(reload_cache=reload_cache)
 
     @property
     def dataset_format(self):
-        return self._dataset_info.dataset_format
+        return self.dataset_info.dataset_format
 
     def get_existing_benchmarks(self) -> List[BenchmarkData]:
-        return self._dataset_info.benchmarks_data
+        return self.dataset_info.benchmarks_data
 
-    def run(self, metrics: List[str], custom_metric_calculator: Callable[[Iterable, Iterable], any] = None):
+    def run(self, metrics: List[str], 
+            custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
+            average = "binary"):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
                   Available regression metrics: ['mae', 'mse', 'rmse', 'r2_score']
-        :custom_metric: your python function to calculate a metric of your preference
+        :custom_metric: Your python function to calculate a metric of your preference
+        :average: For classification, choose one of the available methods {'micro', 'macro', 'samples', 'weighted', 'binary'} or None
         """
-        predictions = self._callback(self._dataset_info)
-        targets = self._dataset_info.ground_truth
+        predictions = self.callback(self.dataset_info)
+        targets = self.dataset_info.ground_truth
 
         metrics_with_calculators = {
-            'accuracy': ClassificationMetrics(predictions, targets),
-            'precision': ClassificationMetrics(predictions, targets),
-            'recall': ClassificationMetrics(predictions, targets),
-            'f1_score': ClassificationMetrics(predictions, targets),
+            'accuracy': ClassificationMetrics(predictions, targets, average=average),
+            'precision': ClassificationMetrics(predictions, targets, average=average),
+            'recall': ClassificationMetrics(predictions, targets, average=average),
+            'f1_score': ClassificationMetrics(predictions, targets, average=average),
             'mae': RegressionMetrics(predictions, targets),
             'mse': RegressionMetrics(predictions, targets),
             'rmse': RegressionMetrics(predictions, targets),
@@ -59,16 +62,13 @@ class Benchmark:
 
         return results
 
-
-# targets ground_truth
-# features predicted
 class CustomBenchmark(Benchmark):
     """
     Benchmark on a custom dataset on a single or multiple models
     """
     def __init__(self, ground_truth: Iterable, predicted: Iterable):
-        self._predicted = predicted
-        self._ground_truth = ground_truth
+        self.predicted = predicted
+        self.ground_truth = ground_truth
 
         super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
 

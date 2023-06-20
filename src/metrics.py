@@ -45,39 +45,40 @@ class BaseMetricsClass:
 
 
 class ClassificationMetrics(BaseMetricsClass):
-    def __init__(self, predictions, targets):
+    def __init__(self, predictions, targets, average='binary'):
         super().__init__(predictions, targets)
+        self.average = average
 
     def calculate_accuracy(self):
         predictions = self._convert_to_numpy(self.predictions)
         targets = self._convert_to_numpy(self.targets)
         return accuracy_score(targets, predictions)
 
-    def calculate_precision(self, average='binary'):
+    def calculate_precision(self):
         predictions = self._convert_to_numpy(self.predictions)
         targets = self._convert_to_numpy(self.targets)
-        return precision_score(targets, predictions, average=average)
+        return precision_score(targets, predictions, average=self.average)
 
-    def calculate_recall(self, average='binary'):
+    def calculate_recall(self):
         predictions = self._convert_to_numpy(self.predictions)
         targets = self._convert_to_numpy(self.targets)
-        return recall_score(targets, predictions, average=average)
+        return recall_score(targets, predictions, average=self.average)
 
-    def calculate_f1_score(self, average='binary'):
+    def calculate_f1_score(self):
         predictions = self._convert_to_numpy(self.predictions)
         targets = self._convert_to_numpy(self.targets)
-        return f1_score(targets, predictions, average=average)
+        return f1_score(targets, predictions, average=self.average)
 
-    def calculate_metric(self, metric_name, average='binary'):
+    def calculate_metric(self, metric_name):
         metric_name = metric_name.lower()
         if metric_name == 'accuracy':
             return self.calculate_accuracy()
         elif metric_name == 'precision':
-            return self.calculate_precision(average=average)
+            return self.calculate_precision()
         elif metric_name == 'recall':
-            return self.calculate_recall(average=average)
+            return self.calculate_recall()
         elif metric_name == 'f1_score':
-            return self.calculate_f1_score(average=average)
+            return self.calculate_f1_score()
         else:
             raise ValueError(f"Unsupported metric: {metric_name}")
 
