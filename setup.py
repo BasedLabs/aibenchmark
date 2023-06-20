@@ -8,8 +8,7 @@ setup(
     license='MIT',
     author="Based Labs",
     author_email='',
-    packages=['', 'scrapers'],
-    package_dir={'': 'src/aibenchmark'},
+    packages=find_packages(exclude=["tests"]),
     url='https://github.com/BasedLabs/aibenchmark/',
     keywords='ai benchmark metrics',
     install_requires=[
