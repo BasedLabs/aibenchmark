@@ -60,7 +60,7 @@ print(list(DatasetsList.get_available_datasets()))
 
 ```
 
-Code example:
+Code example for benchmarking:
 
 ```python
 from aibenchmark.benchmark import Benchmark
