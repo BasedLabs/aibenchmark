@@ -19,11 +19,11 @@ class BaseMetricsClass:
         self.targets = targets
 
     def _convert_to_numpy(self, data):
-        if isinstance(data, (torch.utils.data.Dataset, tf.data.Dataset)):
-            data = list(data)
-        if isinstance(data, (torch.Tensor, tf.Tensor)):
-            data = data.numpy()
-        elif isinstance(data, list):
+        #if isinstance(data, (torch.utils.data.Dataset, tf.data.Dataset)):
+        #    data = list(data)
+        #if isinstance(data, (torch.Tensor, tf.Tensor)):
+        #    data = data.numpy()
+        if isinstance(data, list):
             data = np.array(data)
         elif isinstance(data, pd.DataFrame):
             data = data.values
