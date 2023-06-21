@@ -24,7 +24,6 @@ class BenchmarkData:
         self.benchmark_result = benchmark_result
         self.task_name = task_name
 
-
 class DatasetInfo:
     def __init__(self,
                  dataset_format: any,

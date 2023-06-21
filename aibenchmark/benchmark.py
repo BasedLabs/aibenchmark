@@ -18,7 +18,7 @@ class Benchmark:
         return self.dataset_info.dataset_format
 
     def get_existing_benchmarks(self) -> List[BenchmarkData]:
-        return self.dataset_info.benchmarks_data
+        return {benchmark.model_name: (benchmark.benchmark_result, benchmark.task_name) for benchmark in self.dataset_info.benchmarks_data }
 
     def run(self, metrics: List[str],
             custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
