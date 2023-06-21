@@ -25,7 +25,6 @@ setup(
     install_requires=[
         'datasets',
         'gdown',
-        'keras',
         'lxml',
         'numpy',
         'pandas',

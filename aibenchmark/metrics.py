@@ -6,8 +6,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
     mean_absolute_error, mean_squared_error, r2_score
 from sklearn.base import BaseEstimator
 
-from keras import Model as KerasModel
-
 from collections import Counter
 from typing import List
 import math
@@ -28,8 +26,6 @@ class BaseMetricsClass:
     def count_model_params(self, model):
         if isinstance(model, BaseEstimator):
             return sum([param.size for param in model.get_params().values()])
-        elif isinstance(model, KerasModel):
-            return model.count_params()
         elif isinstance(model, torch.nn.Module):
             return sum(p.numel() for p in model.parameters())
         else:
