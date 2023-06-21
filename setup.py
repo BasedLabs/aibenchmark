@@ -11,14 +11,29 @@ setup(
     packages=find_packages(exclude=["tests"]),
     url='https://github.com/BasedLabs/aibenchmark/',
     keywords='ai benchmark metrics',
+    # install_requires=[
+    #     'scikit-learn',
+    #     'torch',
+    #     'datasets',
+    #     'py7zr',
+    #     'gdown',
+    #     'transformers'
+    #     'pytest',
+    #     'numpy',
+    #     'pillow'
+    # ],
     install_requires=[
-        'scikit-learn',
-        'torch',
-        'py7zr',
+        'datasets',
         'gdown',
-        'transformers'
-        'pytest',
+        'keras',
+        'lxml',
         'numpy',
-        'pillow'
-    ],
+        'pandas',
+        'py7zr',
+        'pytest',
+        'Requests',
+        'scikit_learn',
+        'setuptools',
+        'torch',
+    ]
 )
