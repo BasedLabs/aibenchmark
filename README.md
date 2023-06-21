@@ -96,10 +96,7 @@ print(benchmark.get_existing_benchmarks())
 
 ```bash
 # Clone this project
-$ pip install https://github.com/BasedLabs/aibenchmark
-
-# Access
-$ cd aibenchmark
+$ pip install git+https://github.com/BasedLabs/aibenchmark
 ```
 
 ## Technologies ##
