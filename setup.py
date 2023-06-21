@@ -16,6 +16,7 @@ setup(
         'torch',
         'py7zr',
         'gdown',
+        'transformers'
         'pytest',
         'numpy',
         'pillow'
