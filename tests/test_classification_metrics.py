@@ -1,6 +1,5 @@
 import pytest
 import torch
-import tensorflow as tf
 import pandas as pd
 from aibenchmark.metrics import ClassificationMetrics
 

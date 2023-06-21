@@ -18,7 +18,6 @@ setup(
         'gdown',
         'pytest',
         'numpy',
-        'tensorflow',
         'pillow'
     ],
 )
