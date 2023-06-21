@@ -63,24 +63,28 @@ print(list(DatasetsList.get_available_datasets()))
 Code example for benchmarking:
 
 ```python
+from typing import List
+
 from aibenchmark.benchmark import Benchmark
 from aibenchmark.dataset import DatasetInfo, DatasetsList
 
 model = torch.load(...)
 
-def create_predictions(dataset: DatasetInfo) -> List[float]:
-    # Sample code
-    train_data = dataset.data['Texts']
+# This method is where you should return your predictions.
+def create_predictions(dataset: DatasetInfo):
+    test_features = dataset.data['Texts']
 
-    # Implement your code based on 
-    outputs = model.predict(train_data)
+    # Implement your code based on the type of model you use, your pre- and post-processing etc.
+    outputs = model.predict(test_features)
+
+    # Outputs should be a list or numpy array/series containing integers or floats
     return outputs
 
 
 benchmark = Benchmark(DatasetsList.Texts.SST, create_predictions)
 
 # Results of your model based on predictions
-benchmark_results = benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score']) 
+benchmark_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score']) 
 
 # Existing leaderboard for this dataset
 print(benchmark.get_existing_benchmarks())
@@ -90,7 +94,7 @@ print(benchmark.get_existing_benchmarks())
 
 1) Fast comparison of metrics of your model and other SOTA models for particular dataset
 2) Supporting 16+ most populat datasets, the list is always updating. Soon we willl support more than 1000 datasets
-3) All metrics in one place for any type of data - numpy, torch Tensors, tensorflow tensors, python lists
+3) All metrics in one place and we are adding new ones in a standardised way
 
 ## Starting ##
 

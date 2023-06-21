@@ -19,10 +19,6 @@ class BaseMetricsClass:
         self.targets = targets
 
     def _convert_to_numpy(self, data):
-        #if isinstance(data, (torch.utils.data.Dataset, tf.data.Dataset)):
-        #    data = list(data)
-        #if isinstance(data, (torch.Tensor, tf.Tensor)):
-        #    data = data.numpy()
         if isinstance(data, list):
             data = np.array(data)
         elif isinstance(data, pd.DataFrame):
@@ -50,22 +46,22 @@ class ClassificationMetrics(BaseMetricsClass):
 
     def calculate_accuracy(self):
         predictions = self._convert_to_numpy(self.predictions)
-        targets = self._convert_to_numpy(self.targets)
+        targets = self._convert_to_numpy(self.targets).round()
         return accuracy_score(targets, predictions)
 
     def calculate_precision(self):
         predictions = self._convert_to_numpy(self.predictions)
-        targets = self._convert_to_numpy(self.targets)
+        targets = self._convert_to_numpy(self.targets).round()
         return precision_score(targets, predictions, average=self.average)
 
     def calculate_recall(self):
         predictions = self._convert_to_numpy(self.predictions)
-        targets = self._convert_to_numpy(self.targets)
+        targets = self._convert_to_numpy(self.targets).round()
         return recall_score(targets, predictions, average=self.average)
 
     def calculate_f1_score(self):
         predictions = self._convert_to_numpy(self.predictions)
-        targets = self._convert_to_numpy(self.targets)
+        targets = self._convert_to_numpy(self.targets).round()
         return f1_score(targets, predictions, average=self.average)
 
     def calculate_metric(self, metric_name):
