@@ -48,7 +48,17 @@
 
 AIBenchmark is a package which lets you quickly get the benchmark of your model based on the popular datasets and compare with existing leaderboard. It also has a nice collection of metrics which you could easily import.
 
-We currently support 14 text-based and 2 image-based datasets for AutoBenchmarking aiming for regression/classification tasks. Available datasets could be found in src/dataset.py file. 
+We currently support 14 text-based and 2 image-based datasets for AutoBenchmarking aiming for regression/classification tasks. Available datasets could be found in aibenchmark/dataset.py file. 
+
+Or run the following code:
+
+```python
+
+from aibenchmark.dataset import DatasetsList
+
+print(list(DatasetsList.get_available_datasets()))
+
+```
 
 Code example:
 
