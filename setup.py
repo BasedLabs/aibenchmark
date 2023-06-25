@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='aibench',
-    version='0.0.3',
+    version='0.0.4',
     license='MIT',
     author="Based Labs",
     author_email='',
