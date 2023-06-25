@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 setup(
     name='aibench',
     version='0.0.3',
-    long_description='Benchmark your AI model against popular benchmarks',
     license='MIT',
     author="Based Labs",
     author_email='',
