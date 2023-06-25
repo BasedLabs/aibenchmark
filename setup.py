@@ -4,7 +4,7 @@ print(find_packages('src'))
 
 setup(
     name='aibenchmark',
-    version='0.0.1',
+    version='0.0.2',
     license='MIT',
     author="Based Labs",
     author_email='',
