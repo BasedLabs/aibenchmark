@@ -1,28 +1,34 @@
 import logging
-from typing import Callable, Union, List, Iterable
+from typing import Callable, Union, List, Iterable, Dict, Tuple
 
-from aibenchmark.dataset import DatasetBase, DatasetInfo, CustomDataset, BenchmarkData
+from aibenchmark.dataset import DatasetBase, DatasetInfo, CustomDataset, DatasetsList
 from aibenchmark.exceptions import NotSupportedMetric
 from aibenchmark.metrics import RegressionMetrics, ClassificationMetrics
 
 
 class Benchmark:
-    def __init__(self, dataset: DatasetBase, callback: Callable[[DatasetInfo], any]):
+    def __init__(self, dataset: DatasetBase):
         self.dataset: DatasetBase = dataset
-        self.callback = callback
         logging.info(f'Initializing dataset {dataset}')
-        self.dataset_info: Union[DatasetInfo, None] = dataset.load()
+        self._dataset_info: Union[DatasetInfo, None] = dataset.load()
+
+    @property
+    def dataset_info(self):
+        return self._dataset_info
 
     @property
     def dataset_format(self):
-        return self.dataset_info.dataset_format
+        return self._dataset_info.dataset_format
 
-    def get_existing_benchmarks(self) -> List[BenchmarkData]:
-        return {benchmark.model_name: (benchmark.benchmark_result, benchmark.task_name) for benchmark in self.dataset_info.benchmarks_data }
+    def get_existing_benchmarks(self) -> Dict[str, Tuple[any, str]]:
+        return {benchmark.model_name: (benchmark.benchmark_result, benchmark.task_name) for benchmark in
+                self._dataset_info.benchmarks_data}
 
-    def run(self, metrics: List[str],
+    def run(self,
+            predictions: Iterable[any],
+            metrics: List[str],
             custom_metric_calculator: Callable[[Iterable, Iterable], any] = None,
-            average = "binary"):
+            average="binary"):
         """
         :task: ['regression', 'classification']
         :metrics: Available classification metrics: ['accuracy', 'precision', 'recall', 'f1_score']
@@ -30,8 +36,7 @@ class Benchmark:
         :custom_metric: Your python function to calculate a metric of your preference
         :average: For classification, choose one of the available methods {'micro', 'macro', 'samples', 'weighted', 'binary'} or None
         """
-        predictions = self.callback(self.dataset_info)
-        targets = self.dataset_info.ground_truth
+        targets = self._dataset_info.ground_truth
 
         metrics_with_calculators = {
             'accuracy': ClassificationMetrics(predictions, targets, average=average),
@@ -65,14 +70,19 @@ class CustomBenchmark(Benchmark):
     Benchmark on a custom dataset on a single or multiple models
     """
 
-    def __init__(self, ground_truth: Iterable, predicted: Iterable):
-        self.predicted = predicted
+    def __init__(self, ground_truth: Iterable):
         self.ground_truth = ground_truth
 
-        super().__init__(CustomDataset(ground_truth), lambda dataset_info: predicted)
+        super().__init__(CustomDataset(ground_truth))
+
 
 if __name__ == '__main__':
-    custom_benchmark = CustomBenchmark([1,2,3,4,5,6],[6,5,4,3,2,1])
+    benchmark = Benchmark(DatasetsList.Texts.SST)
+    dataset_info = benchmark.dataset_info
+    print(dataset_info.dataset_format)
+    benchmark.run([0.5] * 2210, ['mae'])
+
+    custom_benchmark = CustomBenchmark([1, 2, 3, 4, 5, 6])
     print(custom_benchmark.dataset_format)
-    metrics_results = custom_benchmark.run(metrics=['mae', 'mse', 'rmse', 'r2_score'])
+    metrics_results = custom_benchmark.run(predictions=[6,5,4,3,2,1], metrics=['mae', 'mse', 'rmse', 'r2_score'])
     print(metrics_results)
