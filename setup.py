@@ -1,12 +1,6 @@
 from setuptools import setup, find_packages
 
-print(find_packages('src'))
-
-try:
-    import pypandoc
-    long_description = pypandoc.convert_file('README.md', 'rst')
-except(IOError, ImportError) as e:
-    long_description = open('README.md').read()
+long_description = open('README.rst').read()
 
 setup(
     name='aibench',
