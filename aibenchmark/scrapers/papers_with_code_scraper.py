@@ -30,7 +30,7 @@ class PapersWithCodeDatasetScraper:
     def scrape(self, url, max_pages=1):
         if not os.path.isdir('papers_with_code_data/images'):
             os.makedirs('papers_with_code_data/images')
-        page = 1
+        page = 3
         base_url = 'https://paperswithcode.com'
         page_link = url + f'&page={page}'
         for i in range(page, max_pages + 1):

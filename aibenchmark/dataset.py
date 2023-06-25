@@ -196,6 +196,26 @@ class ImagesDatasetsList:
         url='https://drive.google.com/file/d/1MydcQlrXjfxjhMwFOEiA_rAB5Xg4W1Vz/view?usp=drive_link',
         file_name='1-2-dataset-coco.json'
     )
+    MNIST = PapersWithCodeHuggingFaceDataset(
+        url='https://drive.google.com/file/d/1LXccmhKP8SsV-BFvczT_JhaR0SVxEoD2/view?usp=drive_link',
+        file_name='1-3-dataset-mnist.json'
+    )
+    FashionMNIST = PapersWithCodeHuggingFaceDataset(
+        url='https://drive.google.com/file/d/1HNYInP2XufT8wKASoO-aYI-axBsfqiSY/view?usp=drive_link',
+        file_name='1-9-dataset-fashion-mnist.json'
+    )
+    CUB_200_2011 = PapersWithCodeHuggingFaceDataset(
+        url='https://drive.google.com/file/d/12u4r2DKMtDd1RVw0ORfawzxqY1aOpFTN/view?usp=drive_link',
+        file_name='1-10-dataset-cub-200-2011.json'
+    )
+    ADE20k = PapersWithCodeHuggingFaceDataset(
+        url='https://drive.google.com/file/d/1GSAp1rVdZWO7Ukaf6F-lRQSadmiAfoO9/view?usp=drive_link',
+        file_name='1-20-dataset-ade20k.json'
+    )
+    TinyImagenet = PapersWithCodeHuggingFaceDataset(
+        url='https://drive.google.com/file/d/1Oo5aot6oDlKN651H0V3L_XfXNt4qQmq8/view?usp=drive_link',
+        file_name='1-26-dataset-tiny-imagenet.json'
+    )
 
 
 class DatasetsList:
