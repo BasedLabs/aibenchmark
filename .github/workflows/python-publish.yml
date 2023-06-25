@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   deploy:
-
+    environment: test
     runs-on: ubuntu-latest
 
     steps:
