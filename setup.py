@@ -5,6 +5,7 @@ print(find_packages('src'))
 setup(
     name='aibenchmark',
     version='0.0.2',
+    long_description='Benchmark your model against other models',
     license='MIT',
     author="Based Labs",
     author_email='',
