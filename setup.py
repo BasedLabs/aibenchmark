@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 print(find_packages('src'))
 
 setup(
-    name='aibenchmark',
+    name='aibench',
     version='0.0.2',
     long_description='Benchmark your model against other models',
     license='MIT',
