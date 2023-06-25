@@ -1,29 +1,12 @@
 import pytest
 from aibenchmark.metrics import NLPMetrics
 
-@pytest.fixture
-def nlp_metrics():
-    references = [
-        "The cat is on the mat",
-        "There is a cat on the mat"
-    ]
-    return NLPMetrics(references)
 
-def test_compute_perplexity(nlp_metrics):
-    text = "The cat is on the mat"
-    perplexity = nlp_metrics.compute_perplexity(text)
-    assert (perplexity == 3.965406456500188)
+def test_compute_perplexity():
+    predicted_logits = [[0.87, 0.52, 0.7, 0.12, 0.89], [0.88, 0.74, 0.51, 0.9, 0.23]]
+    target_ids = [[1, 0, 1, 0, 1], [1, 1, 0, 1, 0]]
+    nlp_metrics = NLPMetrics()
+    perplexity = nlp_metrics.compute_perplexity(predicted_logits, target_ids)
+    assert (perplexity == 112.75840541227849)
     assert isinstance(perplexity, float)
     assert perplexity > 0
-
-def test_compute_bleu(nlp_metrics):
-    text = "The cat is on the mat"
-    bleu_score = nlp_metrics.compute_bleu(text)
-    assert isinstance(bleu_score, float)
-    assert bleu_score >= 0 and bleu_score <= 1
-
-def test_compute_rouge(nlp_metrics):
-    text = "The cat is on the mat"
-    rouge_score = nlp_metrics.compute_rouge(text)
-    assert isinstance(rouge_score, float)
-    assert rouge_score >= 0 and rouge_score <= 1

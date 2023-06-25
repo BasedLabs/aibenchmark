@@ -1,13 +1,18 @@
 import pandas as pd
 import torch
+import torch.nn.functional as F
 import numpy as np
+import nltk
+from nltk.translate.bleu_score import corpus_bleu, sentence_bleu, SmoothingFunction
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, \
-    mean_absolute_error, mean_squared_error, r2_score
+    mean_absolute_error, mean_squared_error, r2_score, log_loss
 from sklearn.base import BaseEstimator
+from sklearn.utils.extmath import softmax
 
 from collections import Counter
 from typing import List
+from itertools import chain
 import math
 import re
 
@@ -112,48 +117,39 @@ class RegressionMetrics(BaseMetricsClass):
 
 
 class NLPMetrics:
-    def __init__(self, references: List[str], tokenizer=None):
-        self.references = references
-        self.tokenizer = tokenizer or self.default_tokenizer
+    def __init__(self):
+        pass
 
-    @staticmethod
-    def default_tokenizer(text):
-        return re.findall(r'\w+', text.lower())
+    def compute_perplexity(self, predicted_logits: List[float], target_ids: List[int]) -> float:
+        """
+        :predicted_logits: - list of model predictions for each text (probability distribution over vocabulary)
+        "target_ids" - ground truth of text ids for each text
 
-    def compute_perplexity(self, text: str, tokenizer=None) -> float:
-        tokens = tokenizer or self.tokenizer
-        tokenized_text = tokens(text)
-        token_counts = Counter(tokenized_text)
-        total_tokens = sum(token_counts.values())
-        perplexity = math.exp(-sum(math.log(token_counts[token] / total_tokens) for token in token_counts) / total_tokens)
-        return perplexity
+        i.e.
 
-    def compute_bleu(self, text: str, tokenizer=None) -> float:
-        tokens = tokenizer or self.tokenizer
-        candidate_tokens = tokens(text)
-        reference_tokens = [tokens(ref) for ref in self.references]
-        reference_token_counts = [Counter(ref) for ref in reference_tokens]
-        candidate_token_counts = Counter(candidate_tokens)
+        if you have two texts [["I", "love", "dogs"], ["I", "like", "Cats"]]
+        with a vocabulary {0: "I", 1: "like", 2: "love", 3: "Cats", 4: "Dogs"}
 
-        clipped_counts = {token: min(candidate_token_counts[token], max(ref_counts[token] for ref_counts in reference_token_counts)) for token in candidate_token_counts}
-        total_candidate_tokens = sum(candidate_token_counts.values())
-        total_clipped_counts = sum(clipped_counts.values())
+        then target_ids are:
+        target_ids = [[1, 0, 1, 0, 1], [1, 1, 0, 1, 0]]
 
-        bleu_score = total_clipped_counts / total_candidate_tokens if total_candidate_tokens != 0 else 0.0
-        return bleu_score
+        and the predicted_logits should be something like
+        predicted_logits = [[0.87, 0.52, 0.7, 0.12, 0.89], [0.88, 0.74, 0.51, 0.9, 0.23]]
+        """
+        # Convert predicted logits to probabilities
+        predicted_probs = F.softmax(torch.from_numpy(np.asarray(predicted_logits)), dim=-1)
 
-    def compute_rouge(self, text: str, tokenizer=None) -> float:
-        tokens = tokenizer or self.tokenizer
-        candidate_tokens = tokens(text)
-        reference_tokens = [tokens(ref) for ref in self.references]
-        reference_ngrams = [self.get_ngrams(ref_tokens) for ref_tokens in reference_tokens]
-        candidate_ngrams = self.get_ngrams(candidate_tokens)
+        # Flatten the predicted probabilities and target IDs
+        predicted_probs = predicted_probs.view(-1, predicted_probs.size(-1))
+        target_ids = torch.from_numpy(np.asarray(target_ids)).float()
 
-        intersection_count = sum(len(candidate_ngrams & ref_ngrams) for ref_ngrams in reference_ngrams)
-        reference_count = sum(len(ref_ngrams) for ref_ngrams in reference_ngrams)
+        # Calculate cross-entropy loss
+        cross_entropy_loss = F.cross_entropy(predicted_probs, target_ids, reduction='none')
 
-        rouge_score = intersection_count / reference_count if reference_count != 0 else 0.0
-        return rouge_score
+        # Calculate perplexity
+        perplexity = torch.exp(torch.mean(cross_entropy_loss))
+
+        return perplexity.item()
 
     @staticmethod
     def get_ngrams(tokens, n=1):
