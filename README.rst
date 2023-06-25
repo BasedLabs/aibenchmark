@@ -1,8 +1,3 @@
-.. container::
-   :name: top
-
-    
-    
 .. raw:: html
 
    <h1 align="center">
@@ -22,49 +17,6 @@ Benchmark your model against other models
 .. raw:: html
 
    </h2>
-
-.. raw:: html
-
-   <p align="center">
-
-.. raw:: html
-
-   <!-- <img alt="Github issues" src="https://img.shields.io/github/issues/BasedLabs/aibenchmark?color=56BEB8" /> -->
-
-.. raw:: html
-
-   <!-- <img alt="Github forks" src="https://img.shields.io/github/forks/BasedLabs/aibenchmark?color=56BEB8" /> -->
-
-.. raw:: html
-
-   <!-- <img alt="Github stars" src="https://img.shields.io/github/stars/BasedLabs/aibenchmark?color=56BEB8" /> -->
-
-.. raw:: html
-
-   </p>
-
-.. raw:: html
-
-   <!-- Status -->
-
-.. raw:: html
-
-   <!-- <h4 align="center"> 
-     🚧  NoLabs 🚀 Under construction...  🚧
-   </h4> 
-
-   <hr> -->
-
-.. raw:: html
-
-   <p align="center">
-
-About   \|   Features   \|   Technologies   \|   Starting   \|   License
-  \|   Author
-
-.. raw:: html
-
-   </p>
 
 About
 -----
