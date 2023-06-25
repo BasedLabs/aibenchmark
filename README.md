@@ -63,29 +63,24 @@ print(list(DatasetsList.get_available_datasets()))
 Code example for benchmarking:
 
 ```python
-from typing import List
-
 from aibenchmark.benchmark import Benchmark
 from aibenchmark.dataset import DatasetInfo, DatasetsList
 
+
+benchmark = Benchmark(DatasetsList.Texts.SST)
+dataset_info: DatasetInfo = benchmark.dataset_info
+print(dataset_info)
+
+test_features = dataset_info.data['Texts']
 model = torch.load(...)
-
-# This method is where you should return your predictions.
-def create_predictions(dataset: DatasetInfo):
-    test_features = dataset.data['Texts']
-
-    # Implement your code based on the type of model you use, your pre- and post-processing etc.
-    outputs = model.predict(test_features)
-
-    # Outputs should be a list or numpy array/series containing integers or floats
-    return outputs
-
-
-benchmark = Benchmark(DatasetsList.Texts.SST, create_predictions)
+# Implement your code based on the type of model you use, your pre- and post-processing etc.
+outputs = model.predict(test_features)
 
 # Results of your model based on predictions
-benchmark_results = benchmark.run(metrics=['accuracy', 'precision', 'recall', 'f1_score']) 
+benchmark_results = benchmark.run(predictions=outputs, metrics=['accuracy', 'precision', 'recall', 'f1_score']) 
 
+# Metrics
+print(benchmark_results)
 # Existing leaderboard for this dataset
 print(benchmark.get_existing_benchmarks())
 ```

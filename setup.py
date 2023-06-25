@@ -2,10 +2,16 @@ from setuptools import setup, find_packages
 
 print(find_packages('src'))
 
+try:
+    import pypandoc
+    long_description = pypandoc.convert_file('README.md', 'rst')
+except(IOError, ImportError):
+    long_description = open('README.md').read()
+
 setup(
     name='aibench',
     version='0.0.2',
-    long_description='Benchmark your model against other models',
+    long_description=long_description,
     license='MIT',
     author="Based Labs",
     author_email='',
