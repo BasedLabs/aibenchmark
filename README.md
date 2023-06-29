@@ -1,5 +1,5 @@
 <div align="center" id="top"> 
-  <img src="media/aibenchmark-logo.png" width="250px" alt="aibencharmk" />
+  <img src="https://github.com/BasedLabs/aibenchmark/raw/4f774ab8ad881724103b69ecd328a1eb80a94d3b/media/aibenchmark-logo.png" width="250px" alt="aibencharmk" />
 
   &#xa0;
 
