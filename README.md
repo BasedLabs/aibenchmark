@@ -44,6 +44,13 @@
 
 <br>
 
+## Installation ##
+
+Run this script in your terminal:
+```bash
+$ pip install aibench
+```
+
 ## About ##
 
 AIBenchmark is a package which lets you quickly get the benchmark of your model based on the popular datasets and compare with existing leaderboard. It also has a nice collection of metrics which you could easily import.
@@ -90,13 +97,6 @@ print(benchmark.get_existing_benchmarks())
 1) Fast comparison of metrics of your model and other SOTA models for particular dataset
 2) Supporting 16+ most populat datasets, the list is always updating. Soon we willl support more than 1000 datasets
 3) All metrics in one place and we are adding new ones in a standardised way
-
-## Starting ##
-
-```bash
-# Clone this project
-$ pip install git+https://github.com/BasedLabs/aibenchmark
-```
 
 ## Technologies ##
 
